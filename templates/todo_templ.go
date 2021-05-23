@@ -103,6 +103,38 @@ func Index(d IndexViewData) templ.Component {
 		if err != nil {
 			return err
 		}
+		_, err = io.WriteString(w, "<turbo-frame")
+		if err != nil {
+			return err
+		}
+		_, err = io.WriteString(w, " id=\"remote-frame\"")
+		if err != nil {
+			return err
+		}
+		_, err = io.WriteString(w, " src=\"http://localhost:8001/remote-frame\"")
+		if err != nil {
+			return err
+		}
+		_, err = io.WriteString(w, ">")
+		if err != nil {
+			return err
+		}
+		_, err = io.WriteString(w, "<h1>")
+		if err != nil {
+			return err
+		}
+		_, err = io.WriteString(w, templ.EscapeString("Loading from remote..."))
+		if err != nil {
+			return err
+		}
+		_, err = io.WriteString(w, "</h1>")
+		if err != nil {
+			return err
+		}
+		_, err = io.WriteString(w, "</turbo-frame>")
+		if err != nil {
+			return err
+		}
 		return err
 	})
 }

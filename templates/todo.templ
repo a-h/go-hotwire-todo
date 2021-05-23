@@ -19,6 +19,9 @@
 	{%! Todos(d.Todos) %}
 	<h1>{%= "Create" %}</h1>
 	{%! NewTodo(d.NewTodo) %}
+	<turbo-frame id="remote-frame" src="http://localhost:8001/remote-frame">
+		<h1>{%= "Loading from remote..." %}</h1>
+	</turbo-frame>
 {% endtempl %}
 
 {% templ Todos(todos []*todo.Todo) %}
