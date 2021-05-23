@@ -1,0 +1,10 @@
+{% package templates %}
+
+{% templ Action(action string, target string, template templ.Component) %}
+	<turbo-stream action={%= action %} target={%= target %}>
+		<template>
+			{%! template %}
+		</template>
+	</turbo-stream>
+{% endtempl %}
+
