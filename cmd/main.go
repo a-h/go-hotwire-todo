@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -15,7 +16,12 @@ import (
 func main() {
 	// Wire up the routes.
 	http.Handle("/", IndexHandler{})
-	http.ListenAndServe(":8000", nil)
+	// Use localhost:8000 so MacOS doesn't bug you to ask if you want to accept incoming connections.
+	fmt.Println("Listening on http://localhost:8000")
+	err := http.ListenAndServe("localhost:8000", nil)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
 	// TODO: Add websockets?
 	// https://discuss.hotwire.dev/t/how-to-connect-turbo-streams-to-spring-boot-websocket/1689/3
 }
