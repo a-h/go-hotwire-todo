@@ -124,23 +124,27 @@ func (h IndexHandler) Post(w http.ResponseWriter, r *http.Request) {
 
 	// Validate and carry out actions.
 	isValid := ntvd.Validate()
+	var newTodo *todo.Todo
 	if isValid {
 		// Update the data.
-		todo.DB{}.Upsert(uuid.New().String(), ntvd.Text, false)
+		newTodo = &todo.Todo{
+			ID:   uuid.New().String(),
+			Item: ntvd.Text,
+		}
+		todo.DB{}.Upsert(newTodo.ID, newTodo.Item, newTodo.Complete)
 		// Clear the form.
 		ntvd = new(templates.NewTodoViewData)
 	}
 
 	// Get the view ready.
-	todos, err := todo.DB{}.List()
-	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		return
-	}
-
 	// If it's not a Turbo request, we have to render the whole screen. However, this means
 	// the app works without JavaScript.
 	if !IsTurboRequest(r) {
+		todos, err := todo.DB{}.List()
+		if err != nil {
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
+		}
 		d := templates.IndexViewData{
 			Todos:   todos,
 			NewTodo: *ntvd,
@@ -150,15 +154,16 @@ func (h IndexHandler) Post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If it's a Turbo request, we can just update the bits of the screen we need to.
+	var actions []Action
 
 	// Update the todo list.
-	// We could have skipped loading all the records from the DB an appended a new
-	// todo, if that was the change.
-	updateTodoList := StreamAction(ActionUpdate, "todos", templates.Todos(todos))
+	if newTodo != nil {
+		actions = append(actions, StreamAction(ActionAppend, "todos", templates.Todo(newTodo)))
+	}
 
 	// Update the form.
-	updateForm := StreamAction(ActionUpdate, "new_todo", templates.NewTodo(*ntvd))
+	actions = append(actions, StreamAction(ActionUpdate, "new_todo", templates.NewTodo(*ntvd)))
 
 	// Return the stream of updates.
-	TurboStream(updateTodoList, updateForm).ServeHTTP(w, r)
+	TurboStream(actions...).ServeHTTP(w, r)
 }
