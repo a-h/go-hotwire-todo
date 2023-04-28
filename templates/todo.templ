@@ -1,58 +1,54 @@
-{% package templates %}
+package templates
 
-{% import todo "github.com/a-h/go-hotwire-todo" %}
+import todo "github.com/a-h/go-hotwire-todo"
 
-{% templ Page(title string, content templ.Component) %}
+
+
+templ Page(title string, content templ.Component) {
 	<html>
 		<head>
-			<title>{%= title %}</title>
+			<title>{ title }</title>
 			<script src="https://unpkg.com/@hotwired/turbo@7.0.0-beta.5/dist/turbo.es5-umd.js"></script>
 		</head>
 		<body>
-			{%! content %}
+			{! content }
 		</body>
 	</html>
-{% endtempl %}
+}
 
-{% templ Index(d IndexViewData) %}
-	<h1>{%= "Todos" %}</h1>
-	{%! Todos(d.Todos) %}
-	<h1>{%= "Create" %}</h1>
-	{%! NewTodo(d.NewTodo) %}
+templ Index(d IndexViewData) {
+	<h1>{ "Todos" }</h1>
+	{! Todos(d.Todos) }
+	<h1>{ "Create" }</h1>
+	{! NewTodo(d.NewTodo) }
 	<turbo-frame id="remote-frame" src="http://localhost:8001/remote-frame">
-		<h1>{%= "Loading from remote..." %}</h1>
+		<h1>{ "Loading from remote..." }</h1>
 	</turbo-frame>
-{% endtempl %}
+}
 
-{% templ Todos(todos []*todo.Todo) %}
+templ Todos(todos []*todo.Todo) {
 	<turbo-frame id="todos">
-		{% for _, t := range todos %}
-			{%! Todo(t) %}
-		{% endfor %}
+		for _, t := range todos {
+			{! Todo(t) }
+		}
 	</turbo-frame>
-{% endtempl %}
+}
 
-{% templ Todo(t *todo.Todo) %}
+templ Todo(t *todo.Todo) {
 	<div>
-		<div>{%= t.Item %}</div>
+		<div>{ t.Item }</div>
 	</div>
-{% endtempl %}
+}
 
-{% templ NewTodo(d NewTodoViewData) %}
+templ NewTodo(d NewTodoViewData) {
 	<turbo-frame id="new_todo">
 		<form action="/" method="post">
-			<div>
-				<input type="text" name="text" value={%= d.Text %} />
-			</div>
-			{% if d.TextValidation != "" %}
-				<div style="color: red">
-					{%= d.TextValidation %}
-				</div>
-			{% endif %}
-			<div>
-				<input type="submit" value="New"/>
-			</div>
+			<div><input type="text" name="text" value={ d.Text }/></div>
+			if d.TextValidation != "" {
+				<div style="color: red">{ d.TextValidation }</div>
+			}
+			<div><input type="submit" value="New"/></div>
 		</form>
 	</turbo-frame>
-{% endtempl %}
+}
 
